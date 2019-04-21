@@ -1,8 +1,22 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+<div>
+  <div id="header">
+    <h1>ヤンサンNavi</h1>
+    <h2>
+        漫画家、山田玲司先生の番組である
+        <a href="https://www.youtube.com/channel/UC09D3M_DdLaZMJnZp0v4pLQ">山田玲司のヤングサンデー</a>
+        における、<br>膨大な数の動画を整理し、あなたのヤンサンライフを支援します。
+    </h2>
   </div>
+  <div id="main">
+    <div id="side-menu">
+      <side-menu />
+    </div>
+    <div id="content">
+        <router-view/>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
