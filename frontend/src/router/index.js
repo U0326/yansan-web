@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import Home from '@/components/Home'
+import VideoList from '@/components/VideoList'
 
 Vue.use(Router)
 
@@ -9,13 +8,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'Home',
+      component: VideoList
     },
     {
-      path: '/home',
-      name: 'Home',
-      component: Home
+      path: '/tag',
+      name: 'VideoList',
+      component: VideoList
     }
   ]
 })

@@ -1,0 +1,22 @@
+{
+  "videoList": [
+    {
+      "id": "33eRFw0b4MQ",
+      "publishedAt": "2019-04-18T09:58:17.000Z",
+      "title": "タイトル02",
+      "tags": ["漫画", "山田玲司"]
+    },
+    {
+      "id": "R0VMEAzykOE",
+      "publishedAt": "2019-04-17T09:58:17.000Z",
+      "title": "タイトル01",
+      "tags": ["漫画", "山田玲司"]
+    },
+    {
+      "id": "RLTUPbOuFWQ",
+      "publishedAt": "2019-04-19T09:58:17.000Z",
+      "title": "タイトル03",
+      "tags": ["漫画", "山田玲司"]
+    }
+  ]
+}
