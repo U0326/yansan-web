@@ -8,8 +8,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: VideoList
+      redirect: '/tag'
     },
     {
       path: '/tag',

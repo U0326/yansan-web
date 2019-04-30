@@ -1,28 +1,32 @@
 <template>
   <div id="video_list">
-    <p>{{ $route.query.name }}</p>
-      <div v-for="info in videoList" v-bind:key=info.id>
-        <p>タイトル:{{info.title}}</p>
-        <p>公開日時:{{
-              info.publishedAt.getFullYear() +
-              '/' + (info.publishedAt.getMonth() + 1) +
-              '/' + info.publishedAt.getDate()
-           }}
-        </p>
-        <p>タグ:
-          <router-link v-for="tag in info.tags" v-bind:key=tag :to="{path: '/tag', query: {name: tag}}">
+    <p>
+      <span v-if=!$route.query.name>ランダムピックアップ：</span>タグ「{{ tag }}」に該当する動画
+    </p>
+    <div class="box" v-for="info in videoList" v-bind:key=info.id>
+      <p>{{info.title}}</p>
+      <p>{{
+            info.publishedAt.getFullYear() +
+            '/' + (info.publishedAt.getMonth() + 1) +
+            '/' + info.publishedAt.getDate()
+         }}
+      </p>
+      <div class="tags">
+        <div class="tag" v-for="tag in info.tags" v-bind:key=tag>
+          <router-link :to="{path: '/tag', query: {name: tag}}">
             {{tag}}
           </router-link>
-        </p>
+        </div>
+      </div>
+      <div class="youtube-video">
         <iframe
-            width="560"
-            height="315"
             :src="'https://www.youtube.com/embed/' + info.id"
             frameborder="0"
             allow="autoplay;
             encrypted-media"
             allowfullscreen />
       </div>
+    </div>
   </div>
 </template>
 
@@ -32,7 +36,10 @@ import videoListJson from '../../static/test_resource/video_list.json'
 
 export default {
   computed: {
-    videoList: () => {
+    tag: function () {
+      return videoListJson.searchTag
+    },
+    videoList: function () {
       let videoList = videoListJson.videoList.sort(
         (a, b) => new Date(a.publishedAt) < new Date(b.publishedAt) ? -1 : 1)
       videoList.forEach(element => { element.publishedAt = new Date(element.publishedAt) })
@@ -41,3 +48,21 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="sass">
+  .tags
+    margin-top: 1rem
+    margin-bottom: 0
+
+  .youtube-video
+    position: relative
+    width: 100%
+    padding-top: 56.25%
+
+    iframe
+      position: absolute
+      top: 0
+      right: 0
+      width: 100% !important
+      height: 100% !important
+</style>

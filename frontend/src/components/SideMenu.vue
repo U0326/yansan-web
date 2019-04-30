@@ -1,16 +1,14 @@
 <template>
-  <ul>
-    <nav>
-      <li>タグ</li>
-        <ul>
-          <li v-for="tag in tags" v-bind:key=tag.name>
-            <router-link :to="{path: '/tag', query: {name: tag.name}}">
-              {{tag.name + '(' + tag.frequency + ')'}}
-            </router-link>
-          </li>
-        </ul>
-    </nav>
-  </ul>
+  <aside class="box menu">
+    <p class="menu-label">タグ一覧</p>
+    <div class="tags">
+      <span class="tag" v-for="tag in tags" v-bind:key=tag.name>
+        <router-link :to="{path: '/tag', query: {name: tag.name}}">
+          {{tag.name + '(' + tag.frequency + ')'}}
+        </router-link>
+      </span>
+    </div>
+  </aside>
 </template>
 
 <script>
