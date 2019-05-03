@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 from backend import config
 
 client = MongoClient(config.DB_HOST, config.MONGO_PORT)
@@ -16,6 +16,16 @@ def take_sorted_tags():
     return list(tags_collection.aggregate(pipeline=pipe))
 
 
+def take_filtered_sorted_tags():
+    sorted_tags = take_sorted_tags()
+    # 大量の動画に紐づくタグは有用ではないと考え、以下の通り絞り込みを行う。
+    return [element for element in sorted_tags
+            if 2 <= element['frequency'] < (sorted_tags[0]['frequency'] / 4)]
+
+
+def take_sorted_video_list(tag):
+    return list(video_info_collection.find({'tags': tag}, {'_id': 0}).sort('published_at', DESCENDING))
+
+
 if __name__ == '__main__':
-    result = take_sorted_tags()
-    print(list(result))
+    print(take_sorted_video_list('山田玲司'))

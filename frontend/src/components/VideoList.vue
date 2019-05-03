@@ -4,13 +4,13 @@
       <span v-if=!$route.query.name>ランダムピックアップ：</span>タグ「{{ tag }}」に該当する動画
     </p>
     <div class="box" v-for="info in videoList" v-bind:key=info.id>
-      <p>{{info.title}}</p>
       <p>{{
-            info.publishedAt.getFullYear() +
-            '/' + (info.publishedAt.getMonth() + 1) +
-            '/' + info.publishedAt.getDate()
+            info.published_at.getFullYear() +
+            '/' + (info.published_at.getMonth() + 1) +
+            '/' + info.published_at.getDate()
          }}
       </p>
+      <p>{{info.title}}</p>
       <div class="tags">
         <div class="tag" v-for="tag in info.tags" v-bind:key=tag>
           <router-link :to="{path: '/tag', query: {name: tag}}">
@@ -31,19 +31,35 @@
 </template>
 
 <script>
-// TODO ajaxを用いて取得する様に修正する必要がある。
-import videoListJson from '../../static/test_resource/video_list.json'
+import httpClient from '@/common/ajax.js'
 
 export default {
-  computed: {
-    tag: function () {
-      return videoListJson.searchTag
-    },
-    videoList: function () {
-      let videoList = videoListJson.videoList.sort(
-        (a, b) => new Date(a.publishedAt) < new Date(b.publishedAt) ? -1 : 1)
-      videoList.forEach(element => { element.publishedAt = new Date(element.publishedAt) })
-      return videoList
+  data: () => {
+    return {
+      tag: null,
+      videoList: null
+    }
+  },
+  watch: {
+    '$route.query.name': function (newValue) {
+      this.takeVideoList(newValue)
+    }
+  },
+  mounted: function () {
+    this.takeVideoList()
+  },
+  methods: {
+    takeVideoList: function (query) {
+      let path = '/api/video-list'
+      if (query) {
+        path += '?name=' + query
+      }
+      httpClient.get(path).then(response => {
+        let list = response.data.videoList
+        list.forEach(element => { element.published_at = new Date(element.published_at) })
+        this.videoList = list
+        this.tag = response.data.searchTag
+      })
     }
   }
 }
