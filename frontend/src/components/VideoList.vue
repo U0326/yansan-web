@@ -3,7 +3,7 @@
     <p>
       <span v-if=!$route.query.name>ランダムピックアップ：</span>タグ「{{ tag }}」に該当する動画
     </p>
-    <div class="box" v-for="info in videoList" v-bind:key=info.id>
+    <div class="box" v-for="info in showVideoList" v-bind:key=info.id>
       <p>{{
             info.published_at.getFullYear() +
             '/' + (info.published_at.getMonth() + 1) +
@@ -27,22 +27,47 @@
             allowfullscreen />
       </div>
     </div>
+    <b-pagination
+      order="is-centered"
+      aria-next-label="Next page"
+      aria-previous-label="Previous page"
+      aria-page-label="Page"
+      aria-current-label="Current page"
+      :per-page="perPage"
+      :total="total"
+      :current.sync="currentPage" />
   </div>
 </template>
 
 <script>
 import httpClient from '@/common/ajax.js'
+const PER_PAGE = 7
 
 export default {
   data: () => {
     return {
       tag: null,
-      videoList: null
+      allVideoList: null,
+      showVideoList: null,
+      perPage: PER_PAGE,
+      total: null,
+      currentPage: null
+    }
+  },
+  computed: {
+    redrawMonitoringTarget () {
+      return [this.allVideoList, this.currentPage]
     }
   },
   watch: {
     '$route.query.name': function (newValue) {
       this.takeVideoList(newValue)
+    },
+    redrawMonitoringTarget: function (newValue) {
+      let currentPage = newValue[1]
+      let start = PER_PAGE * (currentPage - 1)
+      let end = this.allVideoList.length < PER_PAGE * currentPage ? this.allVideoList.length : PER_PAGE * currentPage
+      this.showVideoList = this.allVideoList.slice(start, end)
     }
   },
   mounted: function () {
@@ -57,8 +82,10 @@ export default {
       httpClient.get(path).then(response => {
         let list = response.data.videoList
         list.forEach(element => { element.published_at = new Date(element.published_at) })
-        this.videoList = list
+        this.allVideoList = list
         this.tag = response.data.searchTag
+        this.total = list.length
+        this.currentPage = 1
       })
     }
   }
