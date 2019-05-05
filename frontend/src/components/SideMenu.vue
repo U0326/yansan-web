@@ -1,6 +1,8 @@
 <template>
-  <aside class="box menu">
-    <p class="menu-label">タグ一覧</p>
+  <b-collapse :open="true" aria-id="toggle-tag" class="box menu" id="tags">
+    <div slot="trigger" slot-scope="props" aria-controls="toggle-tag">
+      タグ一覧<a><b-icon size="is-small" :icon="props.open ? 'menu-down' : 'menu-up'" /></a>
+    </div>
     <div class="tags">
       <span class="tag" v-for="tag in tags" v-bind:key=tag._id>
         <router-link :to="{path: '/tag', query: {name: tag._id}}">
@@ -8,7 +10,7 @@
         </router-link>
       </span>
     </div>
-  </aside>
+  </b-collapse>
 </template>
 
 <script>
@@ -33,3 +35,8 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="sass">
+  #tags
+    padding-top: 5px
+</style>
