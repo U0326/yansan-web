@@ -1,2 +1,4 @@
+IS_DEBUG = True
+WEB_PORT = 5000
 DB_HOST = 'localhost'
 MONGO_PORT = 27017
