@@ -8,6 +8,7 @@ COPY ./ /opt/yansan-web/
 WORKDIR /opt/yansan-web
 RUN pip install --upgrade pip
 RUN pip install -r ./backend/requirements.txt
+RUN npm --prefix frontend/ install
 RUN npm --prefix frontend/ rebuild node-sass
 RUN npm --prefix frontend/ run build_prod
 
