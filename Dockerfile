@@ -10,6 +10,5 @@ RUN pip install --upgrade pip
 RUN pip install -r ./backend/requirements.txt
 RUN npm --prefix frontend/ install
 RUN npm --prefix frontend/ rebuild node-sass
-RUN npm --prefix frontend/ run build_prod
 
-CMD python bootstrap.py -p
+CMD sh ./assets/docker_bootstrap.sh -d
