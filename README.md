@@ -14,7 +14,10 @@
 git clone https://github.com/U0326/yansan-web.git
 cd yansan-web
 
+python -m venv venv
+. venv/bin/activate
 pip install -r ./backend/requirements.txt
+
 npm --prefix frontend/ install
 npm --prefix frontend/ run build_dev
 
