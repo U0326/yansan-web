@@ -1,5 +1,6 @@
 <template>
 <div id="root">
+  <fork-on-git-hub />
   <div class="container" id="contents-all">
     <header>
       <div class="hero">
@@ -23,7 +24,7 @@
     </main>
     <footer>
       <div class="content has-text-centered">
-        © 2019 Garaku Project.
+         powered by Garaku Project
       </div>
     </footer>
   </div>
@@ -31,10 +32,12 @@
 </template>
 
 <script>
+import ForkOnGitHub from './components/ForkOnGitHub.vue'
 import SideMenu from './components/SideMenu.vue'
 
 export default {
   components: {
+    ForkOnGitHub,
     SideMenu
   }
 }
