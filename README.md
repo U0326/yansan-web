@@ -30,5 +30,5 @@ python bootstrap.py --development
 ```
 
 ## プロジェクト概要
-- frontend: Vueを利用した、Web画面に関連するソースが含まれています。
+- frontend: Vueを利用した、Web画面に関連するソースが含まれています。(合わせて[こちら](./frontend/README.md)もご覧ください。)
 - backend: Pythonを利用した、WebAPIに関連するソースが含まれています。
