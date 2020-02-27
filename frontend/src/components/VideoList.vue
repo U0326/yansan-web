@@ -1,7 +1,7 @@
 <template>
   <div id="video_list">
     <p>
-      <span v-if=!$route.query.name>ランダムピックアップ：</span>タグ「{{ tag }}」に該当する動画
+      <span v-if=!$route.query.name>ランダムピックアップ：</span>タグ「{{ searchedTag }}」に該当する動画
     </p>
     <div class="box" v-for="info in showVideoList" v-bind:key=info.id>
       <p>{{
@@ -10,11 +10,11 @@
             '/' + info.published_at.getDate()
          }}
       </p>
-      <p>{{info.title}}</p>
+      <p>{{ info.title }}</p>
       <div class="tags">
         <div class="tag" v-for="tag in info.tags" v-bind:key=tag>
           <router-link :to="{path: '/tag', query: {name: tag}}">
-            {{tag}}
+            {{ tag }}
           </router-link>
         </div>
       </div>
@@ -33,41 +33,45 @@
       aria-previous-label="Previous page"
       aria-page-label="Page"
       aria-current-label="Current page"
-      :per-page="perPage"
-      :total="total"
+      :per-page="videoLengthPerPage"
+      :total="allVideoLength"
       :current.sync="currentPage" />
   </div>
 </template>
 
 <script>
 import httpClient from '@/common/ajax.js'
-const PER_PAGE = 7
+const VIDEO_LENGTH_PER_PAGE = 7
 
 export default {
   data: () => {
     return {
-      tag: null,
+      searchedTag: null,
       allVideoList: null,
       showVideoList: null,
-      perPage: PER_PAGE,
-      total: null,
-      currentPage: null
-    }
-  },
-  computed: {
-    redrawMonitoringTarget () {
-      return [this.allVideoList, this.currentPage]
+      allVideoLength: null,
+      currentPage: null,
+      videoLengthPerPage: VIDEO_LENGTH_PER_PAGE
     }
   },
   watch: {
     '$route.query.name': function (newValue) {
       this.takeVideoList(newValue)
     },
-    redrawMonitoringTarget: function (newValue) {
-      let currentPage = newValue[1]
-      let start = PER_PAGE * (currentPage - 1)
-      let end = this.allVideoList.length < PER_PAGE * currentPage ? this.allVideoList.length : PER_PAGE * currentPage
-      this.showVideoList = this.allVideoList.slice(start, end)
+    allVideoList: function (newValue) {
+      this.allVideoLength = newValue.length
+      this.currentPage = 1
+      // currentPageが既に1の場合を考慮し、明示的にshowVideoListの更新を行う。
+      this.updateShowVideoList(this.currentPage)
+    },
+    showVideoList: function () {
+      // showVideoListの描画前にスクロールを行うと、トップに戻れないケースがある為、以下の通り対応する。
+      this.$nextTick(function () {
+        window.scrollTo({top: 0, behavior: 'smooth'})
+      })
+    },
+    currentPage: function (newValue) {
+      this.updateShowVideoList(newValue)
     }
   },
   mounted: function () {
@@ -83,10 +87,20 @@ export default {
         let list = response.data.videoList
         list.forEach(element => { element.published_at = new Date(element.published_at) })
         this.allVideoList = list
-        this.tag = response.data.searchTag
-        this.total = list.length
-        this.currentPage = 1
+        this.searchedTag = response.data.searchTag
+        // ランダムにタグを取得した際に、表示するタグとURIの不整合を以下の通り防ぐ。
+        this.$router.push({path: '/tag', query: {name: this.searchedTag}})
       })
+    },
+    updateShowVideoList: function (currentPage) {
+      let start = this.videoLengthPerPage * (currentPage - 1)
+      let end = 0
+      if (this.allVideoList.length < this.videoLengthPerPage * currentPage) {
+        end = this.allVideoList.length
+      } else {
+        end = this.videoLengthPerPage * currentPage
+      }
+      this.showVideoList = this.allVideoList.slice(start, end)
     }
   }
 }
