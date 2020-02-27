@@ -81,6 +81,8 @@ export default {
         list.forEach(element => { element.published_at = new Date(element.published_at) })
         this.allVideoList = list
         this.searchedTag = response.data.searchTag
+        // ランダムにタグを取得した際に、表示するタグとURIの不整合を以下の通り防ぐ。
+        this.$router.push({path: '/tag', query: {name: this.searchedTag}})
       })
     },
     updateShowVideoList: function (currentPage) {
