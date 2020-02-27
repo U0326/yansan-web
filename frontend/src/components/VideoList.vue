@@ -50,21 +50,28 @@ export default {
       allVideoList: null,
       showVideoList: null,
       allVideoLength: null,
-      videoLengthPerPage: VIDEO_LENGTH_PER_PAGE,
-      currentPage: null
+      currentPage: null,
+      videoLengthPerPage: VIDEO_LENGTH_PER_PAGE
     }
   },
   watch: {
     '$route.query.name': function (newValue) {
       this.takeVideoList(newValue)
     },
-    currentPage: function (newValue) {
-      this.updateShowVideoList(newValue)
-    },
     allVideoList: function (newValue) {
       this.allVideoLength = newValue.length
       this.currentPage = 1
+      // currentPageが既に1の場合を考慮し、明示的にshowVideoListの更新を行う。
       this.updateShowVideoList(this.currentPage)
+    },
+    showVideoList: function () {
+      // showVideoListの描画前にスクロールを行うと、トップに戻れないケースがある為、以下の通り対応する。
+      this.$nextTick(function () {
+        window.scrollTo({top: 0, behavior: 'smooth'})
+      })
+    },
+    currentPage: function (newValue) {
+      this.updateShowVideoList(newValue)
     }
   },
   mounted: function () {
