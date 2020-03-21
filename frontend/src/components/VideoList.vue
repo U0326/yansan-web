@@ -1,7 +1,11 @@
 <template>
   <div id="video_list">
     <p>
-      <span v-if=!$route.query.name>ランダムピックアップ：</span>タグ「{{ searchedTag }}」に該当する動画
+      タグ「{{searchedTag}}」に該当する動画
+    </p>
+    <p>
+      全{{allVideoLength}}件中{{ videoLengthPerPage * (currentPage - 1) + 1}}〜
+      {{videoLengthPerPage * (currentPage - 1) + showVideoList.length}}件表示
     </p>
     <div class="box" v-for="info in showVideoList" v-bind:key=info.id>
       <p>{{
@@ -10,7 +14,7 @@
             '/' + info.published_at.getDate()
          }}
       </p>
-      <p>{{ info.title }}</p>
+      <p>{{info.title}}</p>
       <div class="tags">
         <div class="tag" v-for="tag in info.tags" v-bind:key=tag>
           <router-link :to="{path: '/tag', query: {name: tag}}">
@@ -48,8 +52,8 @@ export default {
     return {
       searchedTag: null,
       allVideoList: null,
-      showVideoList: null,
       allVideoLength: null,
+      showVideoList: null,
       currentPage: null,
       videoLengthPerPage: VIDEO_LENGTH_PER_PAGE
     }
