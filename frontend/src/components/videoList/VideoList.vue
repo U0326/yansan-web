@@ -18,7 +18,7 @@
       <div class="tags">
         <div class="tag" v-for="tag in info.tags" v-bind:key=tag>
           <router-link :to="{path: '/tag', query: {name: tag}}">
-            {{ tag }}
+            {{tag}}
           </router-link>
         </div>
       </div>
@@ -51,21 +51,24 @@ export default {
   data: () => {
     return {
       searchedTag: null,
-      allVideoList: null,
       allVideoLength: null,
       showVideoList: null,
       currentPage: null,
       videoLengthPerPage: VIDEO_LENGTH_PER_PAGE
     }
   },
+  computed: {
+    allVideoList () {
+      return this.$store.getters['videoList/allVideoList']
+    }
+  },
   watch: {
     '$route.query.name': function (newValue) {
       this.takeVideoList(newValue)
     },
-    allVideoList: function (newValue) {
+    allVideoList (newValue) {
       this.allVideoLength = newValue.length
       this.currentPage = 1
-      // currentPageが既に1の場合を考慮し、明示的にshowVideoListの更新を行う。
       this.updateShowVideoList(this.currentPage)
     },
     showVideoList: function () {
@@ -78,8 +81,9 @@ export default {
       this.updateShowVideoList(newValue)
     }
   },
-  mounted: function () {
+  created: function () {
     this.takeVideoList()
+    this.updateShowVideoList(1)
   },
   methods: {
     takeVideoList: function (query) {
@@ -90,7 +94,7 @@ export default {
       httpClient.get(path).then(response => {
         let list = response.data.videoList
         list.forEach(element => { element.published_at = new Date(element.published_at) })
-        this.allVideoList = list
+        this.$store.commit('videoList/mutationAllVideoList', list)
         this.searchedTag = response.data.searchTag
         // ランダムにタグを取得した際に、表示するタグとURIの不整合を以下の通り防ぐ。
         this.$router.push({path: '/tag', query: {name: this.searchedTag}})
