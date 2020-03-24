@@ -1,7 +1,7 @@
 <template>
   <div id="video_list">
     <p>
-      タグ「{{searchedTag}}」に該当する動画
+      {{videoListTitle}}
     </p>
     <p>
       全{{allVideoLength}}件中{{ videoLengthPerPage * (currentPage - 1) + 1}}〜
@@ -44,13 +44,13 @@
 </template>
 
 <script>
-import httpClient from '@/common/ajax.js'
+import videoListTaker from '@/components/videoList/videoListTaker.js'
 const VIDEO_LENGTH_PER_PAGE = 7
 
 export default {
+  mixins: [videoListTaker],
   data: () => {
     return {
-      searchedTag: null,
       allVideoLength: null,
       showVideoList: null,
       currentPage: null,
@@ -63,9 +63,6 @@ export default {
     }
   },
   watch: {
-    '$route.query.name': function (newValue) {
-      this.takeVideoList(newValue)
-    },
     allVideoList (newValue) {
       this.allVideoLength = newValue.length
       this.currentPage = 1
@@ -82,24 +79,9 @@ export default {
     }
   },
   created: function () {
-    this.takeVideoList()
     this.updateShowVideoList(1)
   },
   methods: {
-    takeVideoList: function (query) {
-      let path = '/api/video-list'
-      if (query) {
-        path += '?name=' + query
-      }
-      httpClient.get(path).then(response => {
-        let list = response.data.videoList
-        list.forEach(element => { element.published_at = new Date(element.published_at) })
-        this.$store.commit('videoList/mutationAllVideoList', list)
-        this.searchedTag = response.data.searchTag
-        // ランダムにタグを取得した際に、表示するタグとURIの不整合を以下の通り防ぐ。
-        this.$router.push({path: '/tag', query: {name: this.searchedTag}})
-      })
-    },
     updateShowVideoList: function (currentPage) {
       let start = this.videoLengthPerPage * (currentPage - 1)
       let end = 0
