@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import VideoList from '@/components/VideoList'
+import VideoList from '@/components/videoList/VideoList'
 
 Vue.use(Router)
 

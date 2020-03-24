@@ -1,7 +1,11 @@
 <template>
   <div id="video_list">
     <p>
-      <span v-if=!$route.query.name>ランダムピックアップ：</span>タグ「{{ searchedTag }}」に該当する動画
+      {{videoListTitle}}
+    </p>
+    <p>
+      全{{allVideoLength}}件中{{ videoLengthPerPage * (currentPage - 1) + 1}}〜
+      {{videoLengthPerPage * (currentPage - 1) + showVideoList.length}}件表示
     </p>
     <div class="box" v-for="info in showVideoList" v-bind:key=info.id>
       <p>{{
@@ -10,11 +14,11 @@
             '/' + info.published_at.getDate()
          }}
       </p>
-      <p>{{ info.title }}</p>
+      <p>{{info.title}}</p>
       <div class="tags">
         <div class="tag" v-for="tag in info.tags" v-bind:key=tag>
           <router-link :to="{path: '/tag', query: {name: tag}}">
-            {{ tag }}
+            {{tag}}
           </router-link>
         </div>
       </div>
@@ -40,28 +44,28 @@
 </template>
 
 <script>
-import httpClient from '@/common/ajax.js'
+import videoListTaker from '@/components/videoList/videoListTaker.js'
 const VIDEO_LENGTH_PER_PAGE = 7
 
 export default {
+  mixins: [videoListTaker],
   data: () => {
     return {
-      searchedTag: null,
-      allVideoList: null,
-      showVideoList: null,
       allVideoLength: null,
+      showVideoList: null,
       currentPage: null,
       videoLengthPerPage: VIDEO_LENGTH_PER_PAGE
     }
   },
+  computed: {
+    allVideoList () {
+      return this.$store.getters['videoList/allVideoList']
+    }
+  },
   watch: {
-    '$route.query.name': function (newValue) {
-      this.takeVideoList(newValue)
-    },
-    allVideoList: function (newValue) {
+    allVideoList (newValue) {
       this.allVideoLength = newValue.length
       this.currentPage = 1
-      // currentPageが既に1の場合を考慮し、明示的にshowVideoListの更新を行う。
       this.updateShowVideoList(this.currentPage)
     },
     showVideoList: function () {
@@ -74,24 +78,10 @@ export default {
       this.updateShowVideoList(newValue)
     }
   },
-  mounted: function () {
-    this.takeVideoList()
+  created: function () {
+    this.updateShowVideoList(1)
   },
   methods: {
-    takeVideoList: function (query) {
-      let path = '/api/video-list'
-      if (query) {
-        path += '?name=' + query
-      }
-      httpClient.get(path).then(response => {
-        let list = response.data.videoList
-        list.forEach(element => { element.published_at = new Date(element.published_at) })
-        this.allVideoList = list
-        this.searchedTag = response.data.searchTag
-        // ランダムにタグを取得した際に、表示するタグとURIの不整合を以下の通り防ぐ。
-        this.$router.push({path: '/tag', query: {name: this.searchedTag}})
-      })
-    },
     updateShowVideoList: function (currentPage) {
       let start = this.videoLengthPerPage * (currentPage - 1)
       let end = 0
