@@ -16,7 +16,7 @@
     "babel-polyfill": "^6.26.0",
     "buefy": "^0.7.5",
     "ismobilejs": "^1.0.3",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "sass-loader": "^7.1.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
